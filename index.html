@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link href="" type="text/css">
+</head>
+<style>
+    body {
+        background: url(bkg.png) no-repeat;
+        -webkit-background-size: cover;
+        -moz-background-size: cover;
+        -o-background-size: cover;
+        background-size: cover;
+        width: 100%;
+    }
+    html{
+        width: 100%;
+    }
+</style>
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script type="text/javascript">
+    var accessToken = "7161023f200e45c691172e0e85c5c744";
+    var baseUrl = "https://api.api.ai/v1/";
+    $(document).ready(function() {
+        $("#input").keypress(function(event) {
+            updateScroll();
+            if (event.which === 13) {
+                $('.chatBox').append('<span class="userInput">' + $('input').val() + '</span><br><br>');
+                event.preventDefault();
+                var query  = $('input').val();
+                $('input').val('');
+                send(query);
+                console.log(query);
+
+            }
+        });
+    });
+
+    function send(query) {
+        var text = query;
+        $.ajax({
+            type: "POST",
+            url: baseUrl + "query?v=20180101",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            headers: {
+                "Authorization": "Bearer " + accessToken
+            },
+            data: JSON.stringify({ query: text, lang: "en", sessionId: "somerandomthing" }),
+            success: function(data) {
+                setResponse(data);
+                updateScroll()
+            }
+        });
+    }
+    function setResponse(val) {
+        $(".chatBox").append('<span class="responseData">'+ val.result.fulfillment.speech + '</span><br><br>');
+    }
+</script>
+<style type="text/css">
+    .userInput{
+        float: left;
+        margin: 5px;
+        border-radius: 25px;
+        background: #73AD21;
+        padding: 10px;
+    }
+    .responseData{
+        float:right;
+        margin: 5px;
+        border-radius: 25px;
+        background: rgba(168,150,22,0.64);
+        padding: 10px;
+    }
+    #chatbot{
+        position: fixed;
+        float: right;
+        width: 440px;
+        height: 500px;
+        background: white;
+        border: black solid 1px;
+        right: 10px;
+        bottom: 50px;
+    }
+    #resp{
+        width: 440px;
+        height: 380px;
+        overflow: auto;
+        margin-bottom: 10px;
+        padding-top: 5px;
+    }
+    #input{
+        margin-left: 20px;
+        height: 2.2rem;
+        width: 280px;
+    }
+    #open-bot{
+        position: fixed;
+        right: 10px;
+        bottom: 10px;
+    }
+    .chatbot-name{
+        height: 40px;
+        background-color: rgba(224,224,70,0.64);
+        font-size: 1.3em;
+        padding: 3px;
+    }
+</style>
+<script>
+    function updateScroll() {
+        var messageBody = document.querySelector('#resp');
+        messageBody.scrollTop = messageBody.scrollHeight;
+    }
+    var count=0;
+    function change() {
+        if (count === 0) {
+            $("#open-bot").html("Close Chatbot");
+            $("#chatbot").removeClass("d-none");
+            count=1;
+        }else {
+            $("#open-bot").html("Open Chatbot");
+            $("#chatbot").addClass("d-none");
+            count=0;
+        }
+    }
+</script>
+<link rel="stylesheet" href="bootstrap.min.css">
+<body>
+    <button id="open-bot" class="btn btn-primary" onclick="change()">
+        Open Chatbot
+    </button>
+
+
+    <div id="chatbot" class="d-none">
+        <div class="chatbot-name">
+            ChatBot
+        </div>
+        <div class = 'chatBox' id="resp">
+
+        </div>
+        <div class="row">
+            <div class="col-8" id="">
+                <input id="input" class="input-group" type="text">
+            </div>
+            <div class="col-4">
+                <button id="rec" class="btn btn-outline-primary">send</button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
