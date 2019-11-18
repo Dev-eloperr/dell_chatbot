@@ -25,16 +25,30 @@
     var accessToken = "7161023f200e45c691172e0e85c5c744";
     var baseUrl = "https://api.api.ai/v1/";
     $(document).ready(function() {
-        $("#input").keypress(function(event) {
-            updateScroll();
-            if (event.which === 13) {
-                $('.chatBox').append('<span class="userInput">' + $('input').val() + '</span><br><br>');
-                event.preventDefault();
-                var query  = $('input').val();
-                $('input').val('');
-                send(query);
-                console.log(query);
 
+        var callback = function() {
+            updateScroll();
+            $('.chatBox').append('<span class="userInput">' + $('input').val() + '</span><br><br>');
+            event.preventDefault();
+            var query  = $('input').val();
+            $('input').val('');
+            send(query);
+            console.log(query);
+        };
+
+        $("input").keypress(function(event) {
+            if (event.which == 13) callback();
+        });
+
+        $('#rec').click(function () {
+            if ($('input').val().length>0) {
+                callback();
+            }
+        });
+
+        $("#input").keypress(function set(event){
+            if ((event.which === 13 ) && $('input').val().length>0) {
+                callback();
             }
         });
     });
