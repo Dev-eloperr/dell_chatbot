@@ -13,16 +13,24 @@
         -o-background-size: cover;
         background-size: cover;
         width: 100%;
+        color: white;
+
     }
     html{
         width: 100%;
+        color: white;
     }
 </style>
 
-
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+<script
+        src="https://code.jquery.com/jquery-2.2.4.min.js"
+        integrity="sha256-BbhdlvQf/xTY9gja0Dq3HiwQF8LaCRTXxZKRutelT44="
+        crossorigin="anonymous"></script>
 <script type="text/javascript">
     var accessToken = "7161023f200e45c691172e0e85c5c744";
+
+    var accessToken2 = "10f8062d1f0c4df791cde45f0d42ff5a";
+
     var baseUrl = "https://api.api.ai/v1/";
     $(document).ready(function() {
 
@@ -31,14 +39,27 @@
             $('.chatBox').append('<span class="userInput">' + $('input').val() + '</span><br><br>');
             event.preventDefault();
             var query  = $('input').val();
+            if (query.substring(0,1) === '+'){
+                alert('ph no');
+                otp(query);
+            }
             $('input').val('');
             send(query);
             console.log(query);
         };
 
-        $("input").keypress(function(event) {
-            if (event.which == 13) callback();
-        });
+
+
+        function otp(number){
+            console.log(number);
+            var otp = Math.floor((Math.random() * 100) + 1);
+            sendSMS(number,otp);
+            setResponse()
+
+        }
+        function sendSMS(number,otp){
+
+        }
 
         $('#rec').click(function () {
             if ($('input').val().length>0) {
@@ -70,10 +91,61 @@
             }
         });
     }
+    function order_place(text) {
+        var resp = text;
+
+        return resp;
+    }
+    function order_status(text) {
+        var resp = text;
+
+        return resp;
+    }
+
+    function send_status(query) {
+        var text2 = query;
+        $.ajax({
+            type: "POST",
+            url: baseUrl + "query?v=20180101",
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            headers: {
+                "Authorization": "Bearer " + accessToken2
+            },
+            data: JSON.stringify({ query: text2, lang: "en", sessionId: "somerandomthing" }),
+            success: function(data) {
+                setResponse(data);
+                updateScroll();
+            }
+        });
+    }
+
     function setResponse(val) {
+        if (val.result.fulfillment.speech.substring(0,12) === "Order Placed") {
+            alert("order placed");
+            send_status(order_place(val.result.fulfillment.speech));
+        }else if (val.result.fulfillment.speech.substring(0,62) === "Wait for few seconds. We will get you an update on your status."){
+            alert("order status");
+            send_status(order_status(val.result.fulfillment.speech));
+        }
         $(".chatBox").append('<span class="responseData">'+ val.result.fulfillment.speech + '</span><br><br>');
     }
+
+    function check(val) {
+        if (val.substring(0,12) === "Order Placed") {
+            alert("order placed");
+            send_status(order_place(val));
+        }else if (val.substring(0,62) === "Wait for few seconds. We will get you an update on your status"){
+            alert("order status");
+            send_status(order_status(val));
+        }
+    }
+
+
+    //check("Wait for few seconds. We will get you an update on your status with order id 1234567890");
+
 </script>
+
 <style type="text/css">
     .userInput{
         float: left;
@@ -81,6 +153,7 @@
         border-radius: 25px;
         background: #73AD21;
         padding: 10px;
+        color: white;
     }
     .responseData{
         float:right;
@@ -88,6 +161,7 @@
         border-radius: 25px;
         background: rgba(168,150,22,0.64);
         padding: 10px;
+        color: white;
     }
     #chatbot{
         position: fixed;
@@ -118,9 +192,10 @@
     }
     .chatbot-name{
         height: 40px;
-        background-color: rgba(224,224,70,0.64);
+        background-color: #0c5460;
         font-size: 1.3em;
         padding: 3px;
+        color: white;
     }
 </style>
 <script>
