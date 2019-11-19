@@ -40,7 +40,7 @@
             event.preventDefault();
             var query  = $('input').val();
             if (query.substring(0,1) === '+'){
-                alert('ph no');
+                //alert('ph no');
                 otp(query);
             }
             $('input').val('');
@@ -122,15 +122,15 @@
 
     function setResponse(val) {
         if (val.result.fulfillment.speech.substring(0,12) === "Order Placed") {
-            alert("order placed");
+            alert("Data relayed");
             send_status(order_place(val.result.fulfillment.speech));
-        }else if (val.result.fulfillment.speech.substring(0,62) === "Wait for few seconds. We will get you an update on your status."){
-            alert("order status");
+        }else if (val.result.fulfillment.speech.substring(0,21) === "Wait for few seconds."){
+            alert("Data Relayed");
             send_status(order_status(val.result.fulfillment.speech));
         }
         $(".chatBox").append('<span class="responseData">'+ val.result.fulfillment.speech + '</span><br><br>');
     }
-
+/*
     function check(val) {
         if (val.substring(0,12) === "Order Placed") {
             alert("order placed");
@@ -140,6 +140,8 @@
             send_status(order_status(val));
         }
     }
+
+ */
 
 
     //check("Wait for few seconds. We will get you an update on your status with order id 1234567890");
